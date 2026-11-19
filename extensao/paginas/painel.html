@@ -1,0 +1,140 @@
+<!doctype html><html lang=pt-BR><meta charset=utf-8><title>Clipper</title>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<link rel=icon href="../icones/clipper-32.png">
+<script src="../comum/tema-inicial.js"></script>
+<link rel=stylesheet href="../comum/base.css">
+<style>
+.pagina{flex:1;overflow-y:auto;padding:22px 24px 28px;display:flex;flex-direction:column}
+.wrap{max-width:1680px;width:100%;margin:0 auto}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.col>:last-child{flex:1}
+/* botões de ação: ícone num quadrado à esquerda, nome e explicação à direita */
+.acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.acao{position:relative;height:auto;min-height:66px;justify-content:flex-start;gap:12px;padding:12px 14px;border-radius:12px;
+text-align:left;white-space:normal;box-shadow:var(--sombra)}
+.acao .ic{width:38px;height:38px;border-radius:10px;background:var(--pri-cx);color:var(--pri);display:grid;place-items:center;flex:none;transition:.12s}
+.acao .ic svg{width:19px;height:19px}
+.acao .tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.acao .tx b{font-size:13px;font-weight:650;color:var(--txt)}
+.acao .tx small{font-size:11.5px;font-weight:400;color:var(--mut);line-height:1.35}
+.acao:hover:not(:disabled){border-color:var(--pri-cx-b);background:var(--sup)}
+.acao:hover:not(:disabled) .ic{background:var(--pri);color:var(--pri-txt)}
+.acao.vermelho .ic{background:color-mix(in srgb,var(--bug) 11%,transparent);color:var(--bug)}
+.acao.vermelho:hover:not(:disabled){border-color:color-mix(in srgb,var(--bug) 35%,transparent)}
+.acao.vermelho:hover:not(:disabled) .ic{background:var(--bug);color:#fff}
+.acao:disabled .ic{background:var(--sup3);color:var(--mut)}
+.acao .badge{position:absolute;top:10px;right:10px}
+@media(max-width:420px){.acts{grid-template-columns:1fr}}
+@media(max-width:1180px){.cols{grid-template-columns:repeat(2,minmax(0,1fr))}.col.c3{grid-column:1/-1}}
+@media(max-width:760px){.cols{grid-template-columns:1fr}.pagina{padding:16px}}
+@media(max-height:820px){.pagina{padding-top:14px;padding-bottom:14px}.pghead{padding-bottom:10px;margin-bottom:12px}.pghead p{display:none}.pghead h1{font-size:19px}.pgicone{width:34px;height:34px}}
+.pghead{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--borda);margin-bottom:16px}
+.pgicone{width:40px;height:40px;border-radius:10px;background:color-mix(in srgb,var(--bug) 12%,transparent);color:var(--bug);display:flex;align-items:center;justify-content:center;flex:none}
+.pgicone svg{width:20px;height:20px}
+.pghead h1{margin:0;font-size:21px;letter-spacing:-.015em}
+.pghead p{margin:2px 0 0;color:var(--mut);font-size:13px}
+/* cartão de gravação */
+.hero{display:flex;align-items:center;flex-wrap:wrap;gap:14px 18px;padding:16px 18px;transition:background .25s,border-color .25s}
+.hero.on{background:color-mix(in srgb,var(--bug) 9%,var(--sup));border-color:color-mix(in srgb,var(--bug) 55%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--bug) 12%,transparent)}
+#rec{width:58px;height:58px;border-radius:50%;cursor:pointer;display:grid;place-items:center;flex:none;transition:transform .15s,background .2s,border-color .2s;
+background:var(--sup);border:2px solid var(--borda2)}
+#rec:hover{transform:scale(1.04);border-color:var(--bug)}
+#rec i{width:22px;height:22px;border-radius:50%;background:var(--bug);transition:.15s}
+#rec.on{background:var(--bug);border-color:var(--bug);animation:anel 1.6s infinite}
+#rec.on i{border-radius:4px;width:18px;height:18px;background:#fff}
+@keyframes anel{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bug) 50%,transparent)}100%{box-shadow:0 0 0 18px transparent}}
+.hero .t{flex:1;min-width:0}.hero .t b{display:block;font-size:16px;font-weight:700;margin-bottom:3px}.hero .t span{color:var(--mut);line-height:1.5}
+.hero.on .t b{color:var(--bug)}
+/* monitor: vazio quando parado, prévia ao vivo quando grava */
+.tela{flex-basis:100%;position:relative;aspect-ratio:16/9;max-height:260px;border-radius:10px;overflow:hidden;background:var(--sup2);border:1.5px dashed var(--borda2)}
+.hero.on .tela{border:1.5px solid color-mix(in srgb,var(--bug) 55%,transparent);background:#000}
+.tela .vazia{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px;text-align:center;color:var(--mut)}
+.tela .vazia svg{width:34px;height:34px;color:var(--borda2);margin-bottom:4px}
+.tela .vazia b{color:var(--txt2);font-size:13px}
+.tela .vazia span{font-size:12px;line-height:1.45;max-width:320px}
+.tela video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.selo{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;background:rgba(0,0,0,.65);color:#fff;font-size:11.5px;font-weight:700;backdrop-filter:blur(4px)}
+.selo i{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:pisca 1.4s infinite}
+.badge{min-width:18px;height:18px;line-height:18px;padding:0 6px;border-radius:99px;background:var(--pri);color:var(--pri-txt);font-size:11px;font-weight:700}
+.aviso{padding:11px 14px;border-radius:10px;color:var(--txt2);background:var(--pri-cx);border:1px solid var(--pri-cx-b);line-height:1.5}
+.aviso b{color:var(--txt)}
+/* painéis de configuração */
+.painel{padding:16px 18px 18px}
+.pcab{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.row{display:grid;gap:12px;grid-template-columns:repeat(3,1fr)}
+.f{margin-top:14px}
+.hint{color:var(--mut);font-size:12px;margin-top:10px;line-height:1.5}
+.atalhos{display:flex;flex-direction:column;gap:8px}
+.atalho{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:var(--sup2);border:1px solid var(--borda)}
+.atalho span{flex:1;min-width:0}
+.atalho kbd{font-size:11.5px}
+.atalho em{color:var(--mut);font-size:12px}
+#msg{color:var(--mut)}
+</style>
+<body>
+<header class=topo><div class=logo><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg><span>Clipper</span></div>
+ <span class=esp></span><button class="btn sm" id=btnTema></button></header>
+<div class=pagina><div class=wrap>
+<div class=pghead><div class=pgicone><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></div>
+ <div><h1>Clipper</h1><p>Grava os últimos segundos da tela, tira prints e corta os vídeos.</p></div></div>
+<div class=cols>
+
+<div class="col c1">
+<div class="card hero" id=hero><button id=rec title="Começar a gravar"><i></i></button>
+ <div class=t><b id=ht>Gravação parada</b><span id=hs></span></div>
+ <button class="btn sm" id=trocar hidden title="Para a gravação e escolhe outro monitor (o buffer recomeça)">Trocar monitor</button>
+ <div class=tela id=tela>
+  <div class=vazia id=telaVazia><svg viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=round><rect x=2 y=3 width=20 height=14 rx=2 /><path d="M8 21h8M12 17v4"/></svg>
+   <b>Nenhum monitor sendo gravado</b><span id=telaDica>Ao clicar em gravar, você escolhe o monitor.</span></div>
+  <video id=prev muted playsinline hidden></video>
+  <div class=selo id=telaSelo hidden><i></i><span id=telaNome></span></div>
+ </div></div>
+<div class=aviso id=avisoAba hidden><b>Deixe esta aba aberta.</b> A gravação acontece nela: se ela for fechada, a gravação para. Ela foi fixada para não fechar sem querer.</div>
+<div class=acts>
+ <button class="btn acao vermelho" id=bclip title="Salva os últimos segundos e abre o trim"><span class=ic><svg viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg></span><span class=tx><b>Salvar clipe</b><small id=bclipTx>Liga a gravação primeiro</small></span></button>
+ <button class="btn acao" id=bshot title="Print do monitor inteiro"><span class=ic><svg viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx=12 cy=13 r=3 /></svg></span><span class=tx><b>Tirar print</b><small>Do monitor inteiro</small></span></button>
+ <button class="btn acao" id=bsnip title="Seleciona uma área do monitor e marca o print"><span class=ic><svg viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><path d="M5 3a2 2 0 0 0-2 2M19 3a2 2 0 0 1 2 2M21 19a2 2 0 0 1-2 2M5 21a2 2 0 0 1-2-2M9 3h1M9 21h1M14 3h1M14 21h1M3 9v1M21 9v1M3 14v1M21 14v1"/></svg></span><span class=tx><b>Print com seleção</b><small>Recorte e marcações</small></span></button>
+ <button class="btn acao" id=otrim><span class=ic><svg viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round><circle cx=6 cy=6 r=3 /><circle cx=6 cy=18 r=3 /><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg></span><span class=tx><b>Abrir trim</b><small>Cortar os clipes salvos</small></span><span class=badge id=qn hidden></span></button>
+ <button class="btn acao" id=ovid><span class=ic><svg viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span class=tx><b>Abrir vídeo…</b><small>Cortar um vídeo do computador</small></span></button>
+ <button class="btn acao" id=fdown title="Abre a pasta Downloads, onde ficam os prints"><span class=ic><svg viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><rect x=3 y=5 width=18 height=14 rx=2 /><circle cx=9 cy=11 r=2 /><path d="m21 16-5-5-9 8"/></svg></span><span class=tx><b>Pasta de downloads</b><small>Onde ficam os arquivos</small></span></button>
+</div>
+<input type=file id=arq accept="video/*" multiple hidden>
+</div>
+
+<div class="col c2">
+<section class="card painel"><div class=pcab><span class=secao style="--c:var(--bug)">Captura</span></div>
+ <div class=row>
+  <div><span class=rot>Buffer (segundos)</span><input id=buffer type=number min=5 max=600></div>
+  <div><span class=rot>FPS</span><select id=fps><option>15</option><option>30</option><option>60</option></select></div>
+  <div><span class=rot>Qualidade</span><select id=qualidade><option value=alta>Alta</option><option value=media>Média</option><option value=baixa>Baixa</option></select></div>
+ </div>
+ <div class=f><span class=rot>Áudio</span><select id=audio>
+  <option value=nenhum>Sem áudio</option><option value=sistema>Som do computador</option>
+  <option value=microfone>Microfone</option><option value=ambos>Som do computador + microfone</option></select></div>
+ <div class=hint>Para gravar o som do computador, marque <b>Compartilhar áudio do sistema</b> na janela de escolha da tela.
+  As mudanças aqui valem na próxima gravação.</div>
+</section>
+</div>
+
+<div class="col c3">
+<section class="card painel"><div class=pcab><span class=secao style="--c:var(--laranja)">Atalhos</span><span class=esp></span>
+ <button class="btn sm" id=mudarAtalhos>Alterar atalhos</button></div>
+ <div class=atalhos id=atalhos></div>
+ <div class=hint>Os atalhos são do navegador. Para funcionarem com o navegador minimizado ou em outro programa, mude o escopo para
+  <b>Global</b> em "Alterar atalhos".</div>
+</section>
+
+<section class="card painel"><div class=pcab><span class=secao>Geral</span></div>
+ <span class=rot>Pasta dentro de Downloads</span>
+ <input id=pasta placeholder="Clipper">
+ <div class=hint style="margin-top:6px">Os prints vão para <b>Downloads/<span id=pastaEx>Clipper</span>/Prints</b>. Com "Salvar como…" você escolhe outra pasta, e o Clipper lembra dela.</div>
+</section>
+</div>
+
+</div>
+</div></div>
+<footer class=rodape><span class=cred>Criado por <a data-url="https://github.com/scarllettlins">Scarllett Lins</a></span><span class=esp></span>
+ <span id=msg></span><button class="btn pri" id=save disabled>Salvar alterações</button></footer>
+<div id=toast></div>
+<script type=module src="painel.js"></script>

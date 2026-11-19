@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Clipper",
+  "version": "1.0.0",
+  "description": "Grava os últimos segundos da tela, tira prints com marcações e corta vídeos.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icones/clipper-16.png",
+    "32": "icones/clipper-32.png",
+    "48": "icones/clipper-48.png",
+    "128": "icones/clipper-128.png"
+  },
+  "action": {
+    "default_title": "Clipper",
+    "default_popup": "paginas/popup.html",
+    "default_icon": {
+      "16": "icones/clipper-16.png",
+      "32": "icones/clipper-32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["desktopCapture", "downloads", "notifications", "storage", "system.display", "unlimitedStorage"],
+  "commands": {
+    "gravar": {
+      "suggested_key": { "default": "Alt+Shift+R" },
+      "description": "Iniciar / parar gravação"
+    },
+    "clipe": {
+      "suggested_key": { "default": "Alt+Shift+V" },
+      "description": "Salvar clipe (os últimos segundos)"
+    },
+    "print": {
+      "suggested_key": { "default": "Alt+Shift+P" },
+      "description": "Tirar print"
+    },
+    "selecao": {
+      "suggested_key": { "default": "Alt+Shift+S" },
+      "description": "Print com seleção e edição"
+    },
+    "trim": {
+      "description": "Abrir o trim"
+    }
+  }
+}

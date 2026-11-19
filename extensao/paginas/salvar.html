@@ -1,0 +1,27 @@
+<!doctype html><html lang=pt-BR><meta charset=utf-8><title>Salvar print · Clipper</title>
+<link rel=icon href="../icones/clipper-32.png">
+<script src="../comum/tema-inicial.js"></script>
+<link rel=stylesheet href="../comum/base.css">
+<style>
+body{overflow:hidden}
+.c{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding:16px 18px}
+img{flex:1;min-height:0;width:100%;object-fit:contain;border-radius:10px;background:var(--palco);border:1px solid var(--borda)}
+.nm{display:flex;align-items:center;gap:8px}.nm>span{color:var(--mut);font-weight:600}
+.dest{color:var(--mut);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dest b{color:var(--txt2)}
+.bt{display:flex;gap:8px;justify-content:flex-end}
+.vazio{flex:1;display:grid;place-items:center;color:var(--mut)}
+</style>
+<body>
+<header class=topo><div class=logo><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg><span>Clipper</span></div>
+ <span class=mod><small>Print</small></span><span class=esp></span><button class="btn sm" id=btnTema></button></header>
+<div class=c id=conteudo>
+ <span class=secao>Salvar print</span>
+ <img id=img alt="">
+ <div><span class=rot>Nome</span><div class=nm><input id=n maxlength=120 spellcheck=false><span>.png</span></div></div>
+ <div class=dest>Vai para <b id=destino>Downloads/Clipper/Prints</b>. Em "Salvar como…" você escolhe a pasta.</div>
+ <div class=bt><button class=btn id=x>Descartar</button><span class=esp></span><button class=btn id=como>Salvar como…</button><button class="btn pri" id=o>Salvar</button></div>
+</div>
+<footer class=rodape><span class=cred>Criado por <a data-url="https://github.com/scarllettlins">Scarllett Lins</a></span><span class=esp></span>
+ <span style="color:var(--mut);font-size:12px"><kbd>Enter</kbd> salva · <kbd>Esc</kbd> descarta · o print também é copiado</span></footer>
+<div id=toast></div>
+<script type=module src="salvar.js"></script>
